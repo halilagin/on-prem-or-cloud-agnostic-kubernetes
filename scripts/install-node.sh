@@ -26,4 +26,7 @@ EOF
 apt-get update
 apt-get install -y kubelet kubeadm kubectl
 
+rm /etc/containerd/config.toml
+systemctl restart containerd
 echo "You can now execute the kubeadm join command (the command is shown during kubeadm init on the master node)"
+
