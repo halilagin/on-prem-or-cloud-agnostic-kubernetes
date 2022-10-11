@@ -19,6 +19,13 @@ add-apt-repository --yes \
 apt-get update && apt-get install docker-ce docker-ce-cli containerd.io -y
 
 
+#host preparation for kubernetes installation
+swapoff -a
+rm /swap.img
+sed "-i.bak" '/swap.img/d' /etc/fstab
+hostnamectl set-hostname kube_master
+
+
 echo "installing kubernetes"
 apt-get update && apt-get install -y apt-transport-https
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
@@ -26,7 +33,9 @@ cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
 deb http://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 apt-get update
-apt-get install -y kubelet kubeadm kubectl
+#apt-get install -y kubelet kubeadm kubectl
+apt-get install -y kubelet=1.21.14-00 kubeadm=1.21.14-00 kubectl=1.21.14-00
+apt-mark hold kubeadm kubelet kubectl
 
 # DigitalOcean without firewall (IP-in-IP allowed) - or any other cloud / on-prem that supports IP-in-IP traffic
 # echo "deploying kubernetes (with calico)..."
@@ -40,7 +49,8 @@ apt-get install -y kubelet kubeadm kubectl
 echo '# kubeadm-config.yaml
 kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta3
-kubernetesVersion: v1.21.0
+kubernetesVersion: v1.21.14
+controlPlaneEndpoint: "kube_master:6443"
 networking:
   podSubnet: 10.244.0.0/16
 ---
@@ -53,6 +63,8 @@ echo "deploying kubernetes (with canal)..."
 rm /etc/containerd/config.toml
 systemctl restart containerd
 kubeadm init --config kubeadm-config.yaml # add --apiserver-advertise-address="ip" if you want to use a different IP address than the main server IP
+curl https://docs.projectcalico.org/manifests/calico.yaml -O
+kubectl apply -f calico.yaml
 export KUBECONFIG=/etc/kubernetes/admin.conf
 curl https://docs.projectcalico.org/manifests/canal.yaml -O
 kubectl apply -f canal.yaml
