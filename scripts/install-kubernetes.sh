@@ -24,14 +24,15 @@ swapoff -a
 rm /swap.img
 sed "-i.bak" '/swap.img/d' /etc/fstab
 hostnamectl set-hostname kube_master
-cat <<EOF >>/etc/sysctl.conf
-net.ipv6.conf.all.disable_ipv6=1
-net.ipv6.conf.default.disable_ipv6=1
-net.ipv6.conf.lo.disable_ipv6=1
-EOF
-sysctl -p
-echo /etc/init.d/procps restart >> /etc/rec.local
-chmod 755 /etc/rc.local
+#cat <<EOF >>/etc/sysctl.conf
+#net.ipv6.conf.all.disable_ipv6=1
+#net.ipv6.conf.default.disable_ipv6=1
+#net.ipv6.conf.lo.disable_ipv6=1
+#EOF
+#sysctl -p
+#/etc/init.d/procps restart
+#echo /etc/init.d/procps restart >> /etc/rec.local
+#chmod 755 /etc/rc.local
 
 
 echo "installing kubernetes"
@@ -56,7 +57,7 @@ apt-mark hold kubeadm kubelet kubectl
 # kubeadm configuration
 echo '# kubeadm-config.yaml
 kind: ClusterConfiguration
-apiVersion: kubeadm.k8s.io/v1beta3
+apiVersion: kubeadm.k8s.io/v1beta2
 kubernetesVersion: v1.21.14
 controlPlaneEndpoint: "kube_master:6443"
 networking:
