@@ -40,7 +40,7 @@ apt-get install -y kubelet kubeadm kubectl
 echo '# kubeadm-config.yaml
 kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta3
-#kubernetesVersion: v1.21.0
+kubernetesVersion: v1.21.0
 networking:
   podSubnet: 10.244.0.0/16
 ---
