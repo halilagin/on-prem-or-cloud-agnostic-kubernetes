@@ -91,3 +91,8 @@ kubeadm init --config kubeadm-config.yaml # add --apiserver-advertise-address="i
 #kubectl apply -f calico.yaml
 #curl https://docs.projectcalico.org/manifests/canal.yaml -O
 #kubectl apply -f canal.yaml
+
+
+curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/v3.2.0/kustomize_3.2.0_linux_amd64 -o /usr/local/bin/kustomize
+chmod +x /usr/local/bin/kustomize
+git clone https://github.com/kubeflow/manifests.git
