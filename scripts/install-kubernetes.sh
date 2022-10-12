@@ -23,7 +23,7 @@ apt-get update && apt-get install docker-ce docker-ce-cli containerd.io -y
 swapoff -a
 rm /swap.img
 sed "-i.bak" '/swap.img/d' /etc/fstab
-hostnamectl set-hostname kubemaster
+#hostnamectl set-hostname kubemaster
 #cat <<EOF >>/etc/sysctl.conf
 #net.ipv6.conf.all.disable_ipv6=1
 #net.ipv6.conf.default.disable_ipv6=1
@@ -71,7 +71,7 @@ echo '# kubeadm-config.yaml
 kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta2
 kubernetesVersion: v1.21.14
-controlPlaneEndpoint: "kubemaster:6443"
+#controlPlaneEndpoint: "kubemaster:6443"
 networking:
   podSubnet: 10.244.0.0/16
 ---
