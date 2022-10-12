@@ -23,7 +23,7 @@ apt-get update && apt-get install docker-ce docker-ce-cli containerd.io -y
 swapoff -a
 rm /swap.img
 sed "-i.bak" '/swap.img/d' /etc/fstab
-hostnamectl set-hostname kubemaster
+hostnamectl set-hostname kube_master
 #cat <<EOF >>/etc/sysctl.conf
 #net.ipv6.conf.all.disable_ipv6=1
 #net.ipv6.conf.default.disable_ipv6=1
@@ -54,30 +54,18 @@ apt-mark hold kubeadm kubelet kubectl
 # kubectl apply -f https://docs.projectcalico.org/v3.1/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
 
 
-#cgroup docker setting
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{ "exec-opts": ["native.cgroupdriver=systemd"],
-"log-driver": "json-file",
-"log-opts":
-{ "max-size": "100m" },
-	"storage-driver": "overlay2"
-}
-EOF
-systemctl restart docker
-
-
 # kubeadm configuration
 echo '# kubeadm-config.yaml
 kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta2
 kubernetesVersion: v1.21.14
-controlPlaneEndpoint: "kubemaster:6443"
+controlPlaneEndpoint: "kube_master:6443"
 networking:
   podSubnet: 10.244.0.0/16
 ---
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
-cgroupDriver: systemd' > kubeadm-config.yaml
+cgroupDriver: cgroupfs' > kubeadm-config.yaml
 
 # DigitalOcean with firewall (VxLAN with Flannel) - could be resolved in the future by allowing IP-in-IP in the firewall settings
 echo "deploying kubernetes (with canal)..."
@@ -87,5 +75,5 @@ kubeadm init --config kubeadm-config.yaml # add --apiserver-advertise-address="i
 curl https://docs.projectcalico.org/manifests/calico.yaml -O
 kubectl apply -f calico.yaml
 export KUBECONFIG=/etc/kubernetes/admin.conf
-#curl https://docs.projectcalico.org/manifests/canal.yaml -O
-#kubectl apply -f canal.yaml
+curl https://docs.projectcalico.org/manifests/canal.yaml -O
+kubectl apply -f canal.yaml
