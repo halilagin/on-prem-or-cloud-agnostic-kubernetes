@@ -15,6 +15,13 @@ add-apt-repository --yes \
    $(lsb_release -cs) \
    stable"
 
+
+#host preparation for kubernetes installation
+swapoff -a
+rm /swap.img
+sed "-i.bak" '/swap.img/d' /etc/fstab
+
+
 apt-get update && apt-get install docker-ce docker-ce-cli containerd.io -y
 
 echo "installing kubeadm and kubectl"
@@ -24,7 +31,9 @@ cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
 deb http://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 apt-get update
-apt-get install -y kubelet kubeadm kubectl
+#apt-get install -y kubelet kubeadm kubectl
+apt-get install -y kubelet=1.21.14-00 kubeadm=1.21.14-00 kubectl=1.21.14-00
+apt-mark hold kubeadm kubelet kubectl  
 
 rm /etc/containerd/config.toml
 systemctl restart containerd
