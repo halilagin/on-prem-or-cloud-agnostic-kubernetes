@@ -76,6 +76,12 @@ networking:
   podSubnet: 192.168.0.0/16
 
 ---
+kind: InitConfiguration
+nodeRegistration:
+  kubeletExtraArgs:
+    cloud-provider: "aws"
+
+---
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
 cgroupDriver: systemd' > kubeadm-config.yaml
