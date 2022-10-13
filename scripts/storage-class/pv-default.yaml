@@ -5,8 +5,22 @@ metadata:
 spec:
   capacity:
     storage: 20Gi
-  storageClassName: gp3
+  storageClassName: gp2
   volumeMode: Filesystem
   persistentVolumeReclaimPolicy: Retain
   accessModes:
     - ReadWriteOnce
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: aws-pv
+  labels:
+    type: aws-pv
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  awsElasticBlockStore:
+    volumeID: vol-047d7b346e0951140
+    fsType: ext4
