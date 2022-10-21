@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: aws-pv2
+  labels:
+    type: aws-pv
+spec:
+  capacity:
+    storage: 45Gi
+  accessModes:
+    - ReadWriteOnce
+  awsElasticBlockStore:
+    volumeID: vol-047d7b346e0951140
+    fsType: ext4
